@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import {
   Conflict,
   InternalServerError,
@@ -24,21 +24,16 @@ class AuthController {
         password,
         name,
         email,
-        countryCode,
         phoneNumber,
         gender,
         deviceName,
         status,
-        assignBlockId,
-        districtId,
-        panchayatId,
-        villageId,
       } = req.body;
       fieldValidateError(req);
 
-      const avatarRawData = req?.files?.avatar
+      const avatarRawData = req?.files?.photo
         ? ((await new MediaStoreService().upload({
-            file: req?.files?.avatar,
+            file: req?.files?.photo,
             dir: "User",
           })) as {
             key: string;
@@ -48,30 +43,23 @@ class AuthController {
 
       const checkDuplicate = await UserSchema.findOne({ email });
       if (checkDuplicate) throw new Conflict("This email is already exit.");
-      // const findBlock =
-      //   assignBlockId && role === "GROUND-STAFF"
-      //     ? await BlockSchema.findById(assignBlockId)
-      //     : undefined;
 
       const userRegister = await UserSchema.create({
         role,
         password,
         name,
         email,
-        countryCode,
         phoneNumber,
         deviceName,
         gender,
         status,
-        assignBlock: assignBlockId,
-        avatar: avatarRawData?.key,
-        avatarPath: avatarRawData?.Location,
-        district: districtId,
-        panchayat: panchayatId,
-        village: villageId,
+        photoUrl: avatarRawData?.key,
+        photoRef: avatarRawData?.Location,
       });
       if (!userRegister)
-        throw new InternalServerError("Something, user not created.");
+        throw new InternalServerError(
+          "Something went wrong., user not created."
+        );
       // email send
       await new EmailService().emailSend({
         emails: email,
@@ -93,6 +81,7 @@ class AuthController {
   }
   async signin(req: Request, res: Response, next: NextFunction) {
     try {
+      const { role } = req.query;
       const { email, password } = req.body;
       fieldValidateError(req);
 
@@ -101,6 +90,8 @@ class AuthController {
       });
 
       if (!user) throw new NotFound("Username and password are incorrect.");
+      if (user?.role !== role)
+        throw new NotFound("You are not permitted to login here.");
 
       const isPasswordMatch = user.password
         ? await new PasswordHasServices().compare(password, user.password)
@@ -146,22 +137,32 @@ class AuthController {
     next: NextFunction
   ) {
     try {
-      const userId = req?.payload?.userId;
+      const { userId } = req.query;
+      const role = req?.payload?.role;
+      const user_id =
+        userId && role == "SUPER-ADMIN" ? userId : req?.payload?.userId;
       const { oldPassword, newPassword } = req.body;
       fieldValidateError(req);
-      let user = await UserSchema.findById(userId);
+      let user = await UserSchema.findById(user_id);
 
       if (!user) throw new NotFound("Username and password are incorrect.");
 
-      const isPasswordMatch = user.password
-        ? await new PasswordHasServices().compare(oldPassword, user.password)
-        : undefined;
-      if (!isPasswordMatch) throw new NotFound("Password is incorrect.");
+      if (!userId && role == "SUPER-ADMIN") {
+        const isPasswordMatch = user.password
+          ? await new PasswordHasServices().compare(oldPassword, user.password)
+          : undefined;
+        if (!isPasswordMatch) throw new NotFound("Password is incorrect.");
+      } else if (role !== "SUPER-ADMIN") {
+        const isPasswordMatch = user.password
+          ? await new PasswordHasServices().compare(oldPassword, user.password)
+          : undefined;
+        if (!isPasswordMatch) throw new NotFound("Password is incorrect.");
+      }
 
       const hashPassword = await new PasswordHasServices().hash(newPassword);
 
       const updateUser = await UserSchema.findByIdAndUpdate(
-        userId,
+        user_id,
         {
           password: hashPassword,
         },
@@ -299,37 +300,21 @@ export const AuthControllerValidator = {
       .isLength({ max: 50 })
       .withMessage("email must be at most 50 characters long."),
 
-    body("countryCode").not().isEmpty().withMessage("countryCode is required."),
     body("phoneNumber").not().isEmpty().withMessage("phoneNumber is required."),
     body("gender")
-      .not()
-      .isEmpty()
-      .withMessage("gender is required.")
+      .optional()
       .exists()
       .toUpperCase()
-      .custom((value, { req }) =>
-        ["MALE", "FEMALE"].some((item) => item === value)
-      )
+      .isIn(["MALE", "FEMALE"])
       .withMessage("gender must be MALE or FEMALE."),
     body("role")
       .not()
       .isEmpty()
       .withMessage("role is required.")
-      .toUpperCase()
       .exists()
-      .custom((value, { req }) =>
-        ["SUPER-ADMIN", "ADMIN"].some((item) => item === value)
-      )
-      .withMessage("role must be SUPER-ADMIN or ADMIN.")
-      .custom((value, { req }) => {
-        if (value !== "GROUND-STAFF") return true;
-        if (req?.body?.assignBlockId && req?.body?.districtId) return true;
-
-        return false;
-      })
-      .withMessage(
-        "For the GROUND-STAFF assignBlockId, districtId are required."
-      ),
+      .toUpperCase()
+      .isIn(["SUPER-ADMIN", "ADMIN"])
+      .withMessage("role must be SUPER-ADMIN or ADMIN."),
     body("deviceName")
       .optional()
       .isLength({ min: 1 })
@@ -339,51 +324,41 @@ export const AuthControllerValidator = {
     body("status")
       .optional()
       .exists()
-      .custom((value, { req }) =>
-        ["ACTIVE", "BLOCK"].some((item) => item === value)
-      )
+      .isIn(["ACTIVE", "BLOCK"])
       .withMessage("status must be ACTIVE or BLOCK."),
-    body("assignBlockId")
-      .optional()
-      .isMongoId()
-      .withMessage("assignBlockId must be mongoose id."),
-    body("districtId")
-      .optional()
-      .isMongoId()
-      .withMessage("districtId must be mongoose id."),
-    body("panchayatId")
-      .optional()
-      .isMongoId()
-      .withMessage("panchayatId must be mongoose id."),
-    body("villageId")
-      .optional()
-      .isMongoId()
-      .withMessage("villageId must be mongoose id."),
   ],
   signin: [
-    body("password")
-      .not()
-      .isEmpty()
-      .withMessage("password is required.")
-      .isLength({ min: 3 })
-      .withMessage("password must be at least 3 characters long.")
-      .isLength({ max: 50 })
-      .withMessage("password must be at most 50 characters long."),
+    body("password").not().isEmpty().withMessage("password is required."),
     body("email")
       .not()
       .isEmpty()
       .withMessage("email is required.")
       .isEmail()
-      .withMessage("email is not valid.")
-      .normalizeEmail()
-      .isLength({ min: 3 })
-      .withMessage("email must be at least 3 characters long.")
-      .isLength({ max: 50 })
-      .withMessage("email must be at most 50 characters long."),
+      .withMessage("email is not valid."),
+    query("role")
+      .not()
+      .isEmpty()
+      .withMessage("role is required.")
+
+      .exists()
+      .toUpperCase()
+      .isIn(["SUPER-ADMIN", "ADMIN"])
+      .withMessage("role must be SUPER-ADMIN or ADMIN."),
   ],
   // oldPassword, newPassword
   changePassword: [
-    body("oldPassword").not().isEmpty().withMessage("oldPassword is required."),
+    body("oldPassword")
+      .if((value: string, { req }: { req: any }) => {
+        return Boolean(req?.payload?.role !== "SUPER-ADMIN");
+      })
+      .not()
+      .isEmpty()
+      .withMessage("oldPassword is required.")
+      .if((value: string, { req }: { req: any }) => {
+        return Boolean(req?.payload?.role !== "SUPER-ADMIN");
+      })
+      .optional(),
+
     body("newPassword")
       .not()
       .isEmpty()
