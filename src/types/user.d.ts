@@ -6,15 +6,14 @@ export default interface USER_TYPE extends Document {
   password?: string;
   name: string;
   email: string;
-  avatar?: string;
-  avatarPath?: string;
-  countryCode: string;
+  photoUrl?: string;
+  photoRef?: string;
   phoneNumber: string;
-  gender: "MALE" | "FEMALE";
+  gender?: "MALE" | "FEMALE";
+  slagName?: string;
   deviceName: string;
   status: "ACTIVE" | "BLOCK";
   lastLogInTime: Date;
-
   fcmToken: {
     android: string;
     ios: string;

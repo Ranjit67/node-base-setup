@@ -34,27 +34,17 @@ const userSchema = new Schema<USER_TYPE, Model<USER_TYPE>>(
       unique: true,
       type: String,
       index: true,
-      // validate: [validateEmail, "Please fill a valid email address"],
-
-      // required: [true, "Email is required."],
     },
 
-    avatar: {
+    photoUrl: {
       type: String,
     },
-    avatarPath: {
+    photoRef: {
       type: String,
     },
-    countryCode: {
-      type: String,
-      default: "+91",
-      match: [/^[0-9]{1,3}$/, "Country code must be a number"],
-    },
+
     phoneNumber: {
       type: String,
-      unique: true,
-      index: true,
-      required: [true, "Phone number is required"],
       minlength: [8, "Phone number must be at least 8 characters long"],
       maxlength: [15, "Phone number must be at most 15 characters long"],
     },
@@ -64,7 +54,9 @@ const userSchema = new Schema<USER_TYPE, Model<USER_TYPE>>(
         values: ["MALE", "FEMALE"],
         message: "Gender value should be one of MALE, FEMALE.",
       },
-      required: [true, "Gender is important."],
+    },
+    slagName: {
+      type: String,
     },
     deviceName: {
       type: String,
@@ -101,7 +93,6 @@ const userSchema = new Schema<USER_TYPE, Model<USER_TYPE>>(
   this.password = this.password
     ? await new PasswordHasServices().hash(this.password)
     : undefined;
-  // video uid create
 
   next();
 });
