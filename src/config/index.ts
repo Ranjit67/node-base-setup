@@ -10,5 +10,7 @@ export const accessKey = String(process.env.ACCESS_KEY);
 export const secretKey = String(process.env.SECRET_KEY);
 export const bucketName = String(process.env.BUCKET_NAME);
 export const region = String(process.env.REGION);
+export const certificatePath = String(process.env.CERTIFICATE_PATH);
+export const keyPath = String(process.env.KEY_PATH);
 
 export { default as Admin } from "./firebase";

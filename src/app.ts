@@ -1,7 +1,8 @@
 import express, { Application } from "express";
-// import { port, connectionDB } from "./config";
 import fs from "fs";
+import { createServer } from "https";
 import path from "path";
+import { certificatePath, keyPath } from "./config";
 import { Database } from "./db";
 
 class App {
@@ -15,7 +16,16 @@ class App {
     bottomMiddleware: any[];
     port: number;
   }) {
-    this.app.listen(appInt.port, (): void => {
+    const options =
+      certificatePath && keyPath
+        ? {
+            cert: fs.readFileSync(certificatePath),
+            key: fs.readFileSync(keyPath),
+          }
+        : {};
+
+    const server = createServer(options, this.app);
+    server.listen(appInt.port, (): void => {
       const middleware = fs.readdirSync(path.join(__dirname, "/middleware"));
       this.middleware(middleware, "top."); // top middleware
       this.routes(); //routes
