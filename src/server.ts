@@ -4,6 +4,8 @@ import { port } from "./config";
 
 const app = new App();
 
-app.listen({
-  port,
-});
+setTimeout(() => {
+  app.listen({
+    port,
+  });
+}, 4000);

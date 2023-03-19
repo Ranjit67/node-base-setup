@@ -1,8 +1,8 @@
 {
-  "name": "Political",
+  "name": "node-base",
   "version": "1.0.0",
   "description": "Start from 07-03-23",
-  "main": "server.js",
+  "main": "build/server.js",
   "scripts": {
     "dev": "ts-node-dev --poll ./src/server.ts",
     "heroku-postbuild": "npm run build",

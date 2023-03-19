@@ -270,7 +270,7 @@ class AuthController {
   }
 }
 
-export const AuthControllerValidator = {
+export const AuthControllerValidation = {
   register: [
     body("name")
       .not()

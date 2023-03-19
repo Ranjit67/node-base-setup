@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { AuthController, AuthControllerValidator } from "../controllers";
+import { AuthController, AuthControllerValidation } from "../controllers";
 import { ProtectedMiddleware } from "../middleware";
 
 export default class AuthRoutes {
@@ -16,18 +16,18 @@ export default class AuthRoutes {
     // Signup
     this.router.post(
       "/signup",
-      AuthControllerValidator.register,
+      AuthControllerValidation.register,
       this.authController.register
     );
     // signIn
     this.router.post(
       "/signin",
-      AuthControllerValidator.signin,
+      AuthControllerValidation.signin,
       this.authController.signin
     );
     this.router.post(
       "/change-password",
-      AuthControllerValidator.changePassword,
+      AuthControllerValidation.changePassword,
       new ProtectedMiddleware().protected,
       this.authController.changePassword
     );
@@ -38,13 +38,13 @@ export default class AuthRoutes {
     );
     this.router.post(
       "/forget-password-otp-send",
-      AuthControllerValidator.forgetPassword,
+      AuthControllerValidation.forgetPassword,
       this.authController.forgetPassword
     );
     this.router.post(
       "/forget-password-otp-verify",
       new ProtectedMiddleware().protected,
-      AuthControllerValidator.forgetPasswordOtpVerify,
+      AuthControllerValidation.forgetPasswordOtpVerify,
       this.authController.forgetPasswordOtpVerify
     );
   }

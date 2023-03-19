@@ -6,6 +6,7 @@ class Database {
     this.connect();
   }
   private connect(): void {
+    mongoose.set(`strictQuery`, true);
     mongoose
       .connect(connectionDB)
       .then(() => {
