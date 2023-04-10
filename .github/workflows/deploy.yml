@@ -22,7 +22,6 @@ jobs:
       with:
         host: ${{ secrets.HOST_IP }}
         username: ubuntu
-        key: ${{ secrets.SSH_KEY }}
         script: |
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
