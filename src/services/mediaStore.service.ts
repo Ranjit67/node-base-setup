@@ -117,87 +117,63 @@ export default class MediaStoreService {
         const fileSplit = file.name.split(".");
         const fileType = fileSplit[fileSplit.length - 1];
         const fileName = `${new Date().getTime()}.${fileType}`;
-        const params = {
-          Bucket: `${bucketName}`,
+
+        // const partSize = 1 * 1024 * 1024; // 5 MB
+        const fileStream = fs.createReadStream(file.tempFilePath);
+
+        const multipartParams = {
+          Bucket: bucketName,
           Key: `${dir}/${fileName}`,
-          Body: file?.data,
           ContentType: file.mimetype,
         };
 
-        const objectSetUp = new PutObjectCommand({
-          ...params,
-        });
-        const data = await this.s3.send(objectSetUp);
-        await this.invalidateFileCache(`${params?.Key}`);
+        const { UploadId } = await this.s3.send(
+          new CreateMultipartUploadCommand(multipartParams)
+        );
+
+        const parts: any[] = [];
+
+        for await (const chunk of fileStream) {
+          const partNumber = parts.length + 1;
+          const partParams = {
+            Body: chunk,
+            Bucket: bucketName,
+            Key: `${dir}/${fileName}`,
+            PartNumber: partNumber,
+            UploadId: UploadId,
+          };
+
+          const { ETag } = await this.s3.send(
+            new UploadPartCommand(partParams)
+          );
+          parts.push({ ETag, PartNumber: partNumber });
+        }
+
+        const params = {
+          Bucket: bucketName,
+          Key: `${dir}/${fileName}`,
+          UploadId: UploadId,
+          MultipartUpload: { Parts: parts },
+        };
+
+        await this.s3.send(new CompleteMultipartUploadCommand(params));
 
         return resolve({
           key: `${cloudFont}/${params?.Key}`,
           Location: `${params?.Key}`,
-          allData: data,
+          allData: "",
         });
       } catch (error) {
+        console.log(error);
         return resolve(false);
       }
     });
   }
 
   async newUpload({ file, dir }: { file: any; dir: string }) {
-    const fileSplit = file.name.split(".");
-    const fileType = fileSplit[fileSplit.length - 1];
-    const fileName = `${new Date().getTime()}.${fileType}`;
-    const params = {
-      Bucket: `${bucketName}`,
-      Key: `${dir}/${fileName}`,
-      Body: file?.data,
-      ContentType: file.mimetype,
-    };
-
-    const multipartUploadResponse = await this.s3.send(
-      new CreateMultipartUploadCommand(params)
-    );
-    const uploadId = multipartUploadResponse.UploadId;
-
-    const fileSize = fs.statSync(file?.data).size;
-    const partSize = 1024 * 1024 * 1; // 5 MB per part
-
-    // Divide the file into parts
-    const numParts = Math.ceil(fileSize / partSize);
-
-    // Upload each part
-    const partPromises = [];
-    for (let i = 0; i < numParts; i++) {
-      const start = i * partSize;
-      const end = Math.min(start + partSize, fileSize);
-
-      const partParams = {
-        ...params,
-        UploadId: uploadId,
-        PartNumber: i + 1,
-        Body: fs.createReadStream(file?.data, { start, end }),
-        ContentLength: end - start,
-      };
-
-      const partPromise = this.s3.send(new UploadPartCommand(partParams));
-      partPromises.push(partPromise);
+    try {
+    } catch (error) {
+      console.log(error);
     }
-
-    // Wait for all parts to upload
-    const data = await Promise.all(partPromises);
-
-    const parts = data.map(({ ETag, PartNumber }: any) => ({
-      ETag,
-      PartNumber,
-    }));
-
-    // Complete the multipart upload
-    const completeParams = {
-      ...params,
-      UploadId: uploadId,
-      MultipartUpload: { Parts: parts },
-    };
-
-    const completeResponse = await this.s3.send(
-      new CompleteMultipartUploadCommand(completeParams)
-    );
   }
 }

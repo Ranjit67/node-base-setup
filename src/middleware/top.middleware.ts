@@ -3,7 +3,12 @@ import fileUpload from "express-fileupload";
 class TopMiddleware {
   constructor(app: Application) {
     app.use(express.json());
-    app.use(fileUpload());
+    app.use(
+      fileUpload({
+        useTempFiles: true,
+        preserveExtension: true,
+      })
+    );
     app.use(express.urlencoded({ extended: false }));
     app.use(this.allowCrossDomain);
     app.use(this.cacheClear);

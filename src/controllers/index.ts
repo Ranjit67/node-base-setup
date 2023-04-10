@@ -2,6 +2,7 @@ export {
   AuthControllerValidation,
   default as AuthController,
 } from "./auth.controller";
+export { default as FileUploadController } from "./fileUpload.controller";
 export {
   default as UserController,
   UserControllerValidation,
