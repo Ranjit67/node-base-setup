@@ -16,14 +16,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
-    - name: secret
-      run: |
-        eval "$(ssh-agent -s)"
-        ssh-add <(echo "$SSH_PRIVATE_KEY")
-        ssh user@server "command" 
-        
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}        
     - name: Deploy to prod server
       uses: appleboy/ssh-action@master
       with:
