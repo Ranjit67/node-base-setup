@@ -38,8 +38,9 @@ class App {
     const subRoutes = fs.readdirSync(path.join(__dirname, "/routes"));
     subRoutes.forEach((file: any): void => {
       if (file.includes(".routes.")) {
+        const routPath = file.split(".")[0];
         import(path.join(__dirname + "/routes/" + file)).then((route) => {
-          const rootPath = `/api/v1/${new route.default().path}`;
+          const rootPath = `/api/v1/${routPath}`;
           this.app.use(rootPath, new route.default().router);
         });
       }

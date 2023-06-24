@@ -18,7 +18,7 @@ export default class UserRoutes {
     this.router.get(
       "/",
       UserControllerValidation.getAll,
-      new ProtectedMiddleware().protected,
+      // new ProtectedMiddleware().protected,
       this.userController.getAll
     );
     this.router.put(
