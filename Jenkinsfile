@@ -11,6 +11,8 @@ pipeline{
         }
         stage("run"){
             steps{
+                sh 'ls'
+                sh 'pwd'
                 sh 'npm i'
                 sh 'npm run build'
                 sh 'pm2 start build/server.js'
