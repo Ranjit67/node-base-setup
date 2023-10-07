@@ -13,6 +13,7 @@ pipeline{
             steps{
                 sh 'ls'
                 sh 'pwd'
+                sh 'sudo chmod -R 777 .'
                 sh 'npm i'
                 sh 'npm run build'
                 sh 'pm2 start build/server.js'
