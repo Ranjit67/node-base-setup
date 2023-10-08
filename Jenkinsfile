@@ -1,22 +1,22 @@
 pipeline{
     agent any
     stages{
-        stage("check"){
+        stage("Clone"){
             steps{
-                sh 'echo "check print"'
-                sh 'node -v'
-                sh 'npm -v'
-                sh 'pm2 -version'
+              echo "Git clone here..."
+              git url: "https://github.com/Ranjit67/node-base-setup.git", branch: "main"
             }
         }
-        stage("run"){
+        stage("build"){
             steps{
-                sh 'ls'
-                sh 'pwd'
-                sh 'rm -rf node_modules/'
-                sh 'npm i'
-                sh 'npm run build'
-                sh 'pm2 start build/server.js'
+                echo "Build image here..."
+                sh 'docker build -t node-app .'
+            }
+        }
+        stage("push in docker"){
+            steps{
+                echo "Build push into docker."
+                
             }
         }
 
