@@ -13,14 +13,17 @@ pipeline{
 
           stage("Clone Private Repo") {
             steps {
-                script {
-                    def gitToken = credentials('git-secrets') // Replace with your actual credentials ID
-                    echo 'check - $gitToken'
+               
+
+                   
+                withCredentials([usernamePassword(credentialsId: 'git-username', usernameVariable: 'username', passwordVariable: 'password')]) {
+                echo 'check-$usename'
                     sh '''
                         git config --global credential.helper store
-                        git clone https://Ranjit67:$gitToken@github.com/Ranjit67/node-base-setup.git
+                        git clone https://$username:$password@github.com/Ranjit67/node-base-setup.git
                     '''
-                }
+          
+            }
             }
         }
         stage("build"){
