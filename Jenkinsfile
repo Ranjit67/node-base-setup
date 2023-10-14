@@ -14,8 +14,6 @@ pipeline{
           stage("Clone Private Repo") {
             steps {
                
-
-                   
                 withCredentials([usernamePassword(credentialsId: 'git-username', usernameVariable: 'username', passwordVariable: 'password')]) {
                 echo 'check-$usename'
                     sh '''
@@ -40,7 +38,7 @@ pipeline{
                     sh 'docker tag node-app $username/node-app:latest'
   
             sh 'docker login -u $username -p $password'
-            sh 'docker push --target $username/node-app:latest'
+            sh 'docker push $username/node-app:latest'
           
             }
                 
