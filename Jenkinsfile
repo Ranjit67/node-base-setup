@@ -10,7 +10,7 @@ pipeline{
         stage("build"){
             steps{
                 echo "Build image here..."
-                sh 'docker build -t node-app .'
+                // sh 'docker build -t node-app .'
             }
         }
         stage("push in docker"){
