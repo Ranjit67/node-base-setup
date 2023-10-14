@@ -8,6 +8,7 @@ pipeline{
               
 
                   withCredentials([string(credentialsId: 'PAT', variable: 'GIT_PAT')]){
+                    echo '$GIT_PAT'
 
                     // git url: 'https://$GIT_PAT@github.com/Ranjit67/node-base-setup.git', branch: "main"
 
