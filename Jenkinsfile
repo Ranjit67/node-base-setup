@@ -19,11 +19,11 @@ pipeline{
                 
                 withCredentials([usernamePassword(credentialsId: 'docker-user', usernameVariable: 'username', passwordVariable: 'password')]) {
   
-            sh 'echo $PASSWORD'
+            sh 'echo $password'
   // also available as a Groovy variable
-        echo USERNAME
+        echo username
   // or inside double quotes for string interpolation
-            echo "username is $USERNAME"
+            echo "username is $username"
 }
                 
             }
