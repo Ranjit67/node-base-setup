@@ -3,12 +3,6 @@ version: "3.3"
 services:
   api:
     image: 993748048099/node-app:latest
-    networks:
-      - pipline-node_default
     ports:
       - "8081:8081"
     command: ["node", "./build/server.js"]
-
-networks:
-  pipline-node_default:
-    external: true
