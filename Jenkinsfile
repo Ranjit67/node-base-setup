@@ -10,7 +10,7 @@ pipeline{
         stage("build"){
             steps{
                 echo "Build image here..."
-                sh 'docker build -t node-app .'
+                sh 'docker build -t node-app --target production .'
             }
         }
         stage("push in docker"){
@@ -21,7 +21,7 @@ pipeline{
                     sh 'docker tag node-app $username/node-app:latest'
   
             sh 'docker login -u $username -p $password'
-            sh 'docker push $username/node-app:latest'
+            sh 'docker push --target $username/node-app:latest'
           
             }
                 
