@@ -7,9 +7,9 @@ pipeline{
             steps {
                
                 withCredentials([usernamePassword(credentialsId: 'git-username', usernameVariable: 'username', passwordVariable: 'password')]) {
-                echo "check-$usename"
+                echo 'check-$usename'
                     
-                    git url: "https://$username:$password@github.com/Ranjit67/node-base-setup.git", branch 'main'
+                    git url: 'https://$username:$password@github.com/Ranjit67/node-base-setup.git', branch 'main'
           
             }
             }
