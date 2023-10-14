@@ -18,7 +18,7 @@ pipeline{
                 echo 'check-$usename'
                     sh '''
                         git config --global credential.helper store
-                        git reset –hard HEAD
+                       
                         git pull https://$username:$password@github.com/Ranjit67/node-base-setup.git
                     '''
                     // git url: 'https://$username:$password@github.com/Ranjit67/node-base-setup.git', branch 'main'
