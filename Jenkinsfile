@@ -16,9 +16,15 @@ pipeline{
         stage("push in docker"){
             steps{
                 echo "Build push into docker."
-                withCredentials([usernamePassword(credentialsId:"docker-user",passwordVariable:"password",usernameVariable:"username")]){
-                    sh 'docker login -u ${env.password} -p ${env.username}'
-                }
+                
+                withCredentials([usernamePassword(credentialsId: 'docker-user', usernameVariable: 'username', passwordVariable: 'password')]) {
+  
+            sh 'echo $PASSWORD'
+  // also available as a Groovy variable
+        echo USERNAME
+  // or inside double quotes for string interpolation
+            echo "username is $USERNAME"
+}
                 
             }
         }
