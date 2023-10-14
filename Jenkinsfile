@@ -16,10 +16,13 @@ pipeline{
                
                 withCredentials([usernamePassword(credentialsId: 'git-username', usernameVariable: 'username', passwordVariable: 'password')]) {
                 echo 'check-$usename'
+              
+                sh 'rm -rf node-base-setup'
                     sh '''
                         git config --global credential.helper store
+                        
                        
-                        git pull https://$username:$password@github.com/Ranjit67/node-base-setup.git
+                        git clone https://$username:$password@github.com/Ranjit67/node-base-setup.git
                     '''
                     // git url: 'https://$username:$password@github.com/Ranjit67/node-base-setup.git', branch 'main'
           
@@ -58,7 +61,7 @@ pipeline{
         stage("test"){
             steps{
                 echo "Test"
-                sh 'curl http://localhost:8082'
+                // sh 'curl http://localhost:8082'
             }
         }
 
