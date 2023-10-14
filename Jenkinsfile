@@ -18,7 +18,7 @@ pipeline{
                     echo 'check - $gitToken'
                     sh '''
                         git config --global credential.helper store
-                        git clone https://Ranjit67:${gitToken}@github.com/Ranjit67/node-base-setup.git
+                        git clone https://Ranjit67:$gitToken@github.com/Ranjit67/node-base-setup.git
                     '''
                 }
             }
