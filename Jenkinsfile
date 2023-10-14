@@ -4,13 +4,22 @@ pipeline{
         stage("Clone"){
             steps{
               echo "Git clone here..."
-            //   git url: "https://github.com/Ranjit67/node-base-setup.git", branch: "main"
+
+              
+
+                  withCredentials([string(credentialsId: 'PAT', variable: 'GIT_PAT')]){
+
+                    git url: 'https://$GIT_PAT@github.com/Ranjit67/node-base-setup.git', branch: "main"
+
+                    // sh "git clone https://<your-pat-token>@github.com/Ranjit67/node-base-setup.git"
+          
+            }
             }
         }
         stage("build"){
             steps{
                 echo "Build image here..."
-                sh 'docker build -t node-app --target production .'
+                sh 'docker build -t node-app .'
             }
         }
         stage("push in docker"){
