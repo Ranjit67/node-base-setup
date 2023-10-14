@@ -15,7 +15,7 @@
 # COPY --from=devlopment /app/build ./build
 # RUN ls
 # CMD ["node" "./build/server.js"]
-FROM node:18-alpine as production
+FROM node:18-alpine
 WORKDIR /app
 COPY *.json ./
 RUN npm install
