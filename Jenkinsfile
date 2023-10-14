@@ -29,7 +29,7 @@ pipeline{
         }
         stage("Deploy"){
             steps{
-                sh 'aa-remove-unknown'
+                
                 sh 'docker-compose -f docker-compose.prod.yml down'
 
                 echo "Deploying code pipline here..."
