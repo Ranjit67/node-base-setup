@@ -4,11 +4,11 @@ services:
   api:
     image: 993748048099/node-app:latest
     networks:
-      - node-network
+      - pipline-node_default
     ports:
       - "8081:8081"
     command: ["node", "./build/server.js"]
 
 networks:
-  node-network:
+  pipline-node_default:
     external: true
