@@ -4,7 +4,7 @@ pipeline{
         stage("Clone"){
             steps{
               echo "Git clone here..."
-              git url: "https://github.com/Ranjit67/node-base-setup.git", branch: "main"
+            //   git url: "https://github.com/Ranjit67/node-base-setup.git", branch: "main"
             }
         }
         stage("build"){
