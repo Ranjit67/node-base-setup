@@ -16,10 +16,11 @@ pipeline{
                
                 withCredentials([usernamePassword(credentialsId: 'git-username', usernameVariable: 'username', passwordVariable: 'password')]) {
                 echo 'check-$usename'
-                    sh '''
-                        git config --global credential.helper store
-                        git clone https://$username:$password@github.com/Ranjit67/node-base-setup.git
-                    '''
+                    // sh '''
+                    //     git config --global credential.helper store
+                    //     git i https://$username:$password@github.com/Ranjit67/node-base-setup.git
+                    // '''
+                    git i 'https://$username:$password@github.com/Ranjit67/node-base-setup.git', branch 'main'
           
             }
             }
