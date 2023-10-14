@@ -29,10 +29,11 @@ pipeline{
         }
         stage("Deploy"){
             steps{
-                // sh 'docker-compose -f docker-compose.prod.yml down'
+                sh 'aa-remove-unknown'
+                sh 'docker-compose -f docker-compose.prod.yml down'
 
                 echo "Deploying code pipline here..."
-                // sh 'docker-compose -f docker-compose.prod.yml up -d'
+                sh 'docker-compose -f docker-compose.prod.yml up -d'
             }
         }
         stage("test"){
