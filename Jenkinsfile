@@ -1,15 +1,27 @@
 pipeline{
     agent any
     stages{
-       
+        stage("Clone"){
+            steps{
+              echo "Git clone here..."
+
+              
+
+                
+            }
+        }
 
           stage("Clone Private Repo") {
             steps {
                
                 withCredentials([usernamePassword(credentialsId: 'git-username', usernameVariable: 'username', passwordVariable: 'password')]) {
                 echo 'check-$usename'
-                    
-                    git url: 'https://$username:$password@github.com/Ranjit67/node-base-setup.git', branch 'main'
+                    sh '''
+                        git config --global credential.helper store
+                        git reset –hard HEAD
+                        git pull https://$username:$password@github.com/Ranjit67/node-base-setup.git
+                    '''
+                    // git url: 'https://$username:$password@github.com/Ranjit67/node-base-setup.git', branch 'main'
           
             }
             }
