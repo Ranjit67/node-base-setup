@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Admin = exports.keyPath = exports.cloudFont = exports.certificatePath = exports.cloudFontDistribution = exports.region = exports.bucketName = exports.secretKey = exports.accessKey = exports.accessSecret = exports.host = exports.password = exports.email = exports.connectionDB = exports.port = void 0;
+require("dotenv/config");
+exports.port = Number(process.env.PORT);
+exports.connectionDB = String(process.env.DATABASE_URL);
+exports.email = String(process.env.EMAIL);
+exports.password = String(process.env.PASSWORD);
+exports.host = String(process.env.HOST);
+exports.accessSecret = String(process.env.ACCESS_SECRET);
+exports.accessKey = String(process.env.ACCESS_KEY);
+exports.secretKey = String(process.env.SECRET_KEY);
+exports.bucketName = String(process.env.BUCKET_NAME);
+exports.region = String(process.env.REGION);
+exports.cloudFontDistribution = String(process.env.CLOUD_FRONT_DISTRIBUTION_ID);
+exports.certificatePath = String(process.env.CERTIFICATE_PATH);
+exports.cloudFont = String(process.env.CLOUD_FRONT_URL);
+exports.keyPath = String(process.env.KEY_PATH);
+var firebase_1 = require("./firebase");
+Object.defineProperty(exports, "Admin", { enumerable: true, get: function () { return __importDefault(firebase_1).default; } });
