@@ -17,6 +17,19 @@ pipeline{
             }
             }
         }
+
+          stage("Clone Private Repo") {
+            steps {
+                script {
+                    def gitToken = credentials('git-secrets') // Replace with your actual credentials ID
+                    echo 'check - ${gitToken}'
+                    sh '''
+                        git config --global credential.helper store
+                        git clone https://Ranjit67:${gitToken}@github.com/Ranjit67/node-base-setup.git
+                    '''
+                }
+            }
+        }
         stage("build"){
             steps{
                 echo "Build image here..."
