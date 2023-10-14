@@ -10,7 +10,7 @@ pipeline{
         stage("build"){
             steps{
                 echo "Build image here..."
-                // sh 'docker build -t node-app --target production .'
+                sh 'docker build -t node-app --target production .'
             }
         }
         stage("push in docker"){
@@ -20,8 +20,8 @@ pipeline{
                 withCredentials([usernamePassword(credentialsId: 'docker-user', usernameVariable: 'username', passwordVariable: 'password')]) {
                     sh 'docker tag node-app $username/node-app:latest'
   
-            // sh 'docker login -u $username -p $password'
-            // sh 'docker push --target $username/node-app:latest'
+            sh 'docker login -u $username -p $password'
+            sh 'docker push --target $username/node-app:latest'
           
             }
                 
@@ -30,16 +30,16 @@ pipeline{
         stage("Deploy"){
             steps{
                 
-                // sh 'docker-compose -f docker-compose.prod.yml down'
+                sh 'docker-compose -f docker-compose.prod.yml down'
 
                 echo "Deploying code pipline here..."
-                // sh 'docker-compose -f docker-compose.prod.yml up -d'
+                sh 'docker-compose -f docker-compose.prod.yml up -d'
             }
         }
         stage("test"){
             steps{
                 echo "Test"
-                // sh 'curl http://localhost:8082'
+                sh 'curl http://localhost:8082'
             }
         }
 
