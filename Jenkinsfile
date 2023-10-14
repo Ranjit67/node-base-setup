@@ -17,13 +17,13 @@ pipeline{
             steps{
                 echo "Build push into docker."
                 
-                withCredentials([usernamePassword(credentialsId: 'docker-user', usernameVariable: 'username', passwordVariable: 'password')]) {
-                    sh 'docker tag node-app $username/node-app:latest'
+            //     withCredentials([usernamePassword(credentialsId: 'docker-user', usernameVariable: 'username', passwordVariable: 'password')]) {
+            //         sh 'docker tag node-app $username/node-app:latest'
   
-            sh 'docker login -u $username -p $password'
-            sh 'docker push $username/node-app:latest'
+            // sh 'docker login -u $username -p $password'
+            // sh 'docker push $username/node-app:latest'
           
-            }
+            // }
                 
             }
         }
@@ -32,7 +32,7 @@ pipeline{
                 // sh 'docker-compose -f docker-compose.prod.yml down'
 
                 echo "Deploying code pipline here..."
-                sh 'docker-compose -f docker-compose.prod.yml up -d'
+                // sh 'docker-compose -f docker-compose.prod.yml up -d'
             }
         }
 
