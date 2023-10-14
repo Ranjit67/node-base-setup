@@ -35,6 +35,12 @@ pipeline{
                 sh 'docker-compose -f docker-compose.prod.yml up -d'
             }
         }
+        stage("test"){
+            step{
+                echo "Test"
+                sh 'curl http://localhost:8081'
+            }
+        }
 
 
     }
