@@ -24,7 +24,7 @@ pipeline{
                     sh '''
                         git config --global credential.helper store
                             cd node-base-setup
-                        git reset --hard Head
+                        git reset --hard HEAD
                         
                        
                         git pull
