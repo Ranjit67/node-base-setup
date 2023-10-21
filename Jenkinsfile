@@ -23,11 +23,8 @@ pipeline{
                 
                     sh '''
                         git config --global credential.helper store
-                            cd node-base-setup
-                        git reset --hard HEAD
-                        
-                       
-                        git pull
+                            rm -rf node-base-setup
+                            git clone https://$username:$password@github.com/Ranjit67/node-base-setup.git
                     '''
           
             }
@@ -35,7 +32,7 @@ pipeline{
         }
         stage("install"){
             steps{
-                bat "npm install"
+                bat "cd node-base-setup && npm install"
             }
         }
         // stage("build"){
