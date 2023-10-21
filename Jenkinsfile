@@ -1,5 +1,8 @@
 pipeline{
     agent any
+    tools{
+        nodejs "node"
+    }
     stages{
         stage("Clone"){
             steps{
@@ -17,47 +20,53 @@ pipeline{
                 withCredentials([usernamePassword(credentialsId: 'git-username', usernameVariable: 'username', passwordVariable: 'password')]) {
                 echo 'check-$usename'
               
-                sh 'rm -rf node-base-setup'
+                
                     sh '''
                         git config --global credential.helper store
+                            cd node-base-setup
+                        git reset --hard Head
                         
                        
-                        git clone https://$username:$password@github.com/Ranjit67/node-base-setup.git
+                        git pull
                     '''
-                    // git url: 'https://$username:$password@github.com/Ranjit67/node-base-setup.git', branch 'main'
           
             }
             }
         }
-        stage("build"){
+        stage("install"){
             steps{
-                echo "Build image here..."
-                sh 'docker build -t node-app .'
+                bat "npm install"
             }
         }
-        stage("push in docker"){
-            steps{
-                echo "Build push into docker."
+        // stage("build"){
+        //     steps{
+        //         echo "Build image here..."
+        //         sh 'docker build -t node-app .'
+        //     }
+        // }
+        // stage("push in docker"){
+        //     steps{
+        //         echo "Build push into docker."
                 
-                withCredentials([usernamePassword(credentialsId: 'docker-user', usernameVariable: 'username', passwordVariable: 'password')]) {
-                    sh 'docker tag node-app $username/node-app:latest'
+        //         withCredentials([usernamePassword(credentialsId: 'docker-user', usernameVariable: 'username', passwordVariable: 'password')]) {
+        //             sh 'docker tag node-app $username/node-app:latest'
   
-            sh 'docker login -u $username -p $password'
-            sh 'docker push $username/node-app:latest'
+        //     sh 'docker login -u $username -p $password'
+        //     sh 'docker push $username/node-app:latest'
           
-            }
+        //     }
                 
-            }
-        }
-        stage("Deploy"){
-            steps{
+        //     }
+        // }
+        // stage("Deploy"){
+        //     steps{
                 
-                sh 'docker-compose -f docker-compose.prod.yml down'
+        //         sh 'docker-compose -f docker-compose.prod.yml down'
 
-                echo "Deploying code pipline here..."
-                sh 'docker-compose -f docker-compose.prod.yml up -d'
-            }
-        }
+        //         echo "Deploying code pipline here..."
+        //         sh 'docker-compose -f docker-compose.prod.yml up -d'
+        //     }
+        // }
         stage("test"){
             steps{
                 echo "Test"
